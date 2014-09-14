@@ -47,6 +47,15 @@ class ofApp : public ofBaseApp{
 
     private:
         static constexpr float pixelsPerMeter_ = 100.;
+        
+        Quaternion<float> currView;
+        ofQuaternion curRot;
+
+        float lastMouseX_;
+        float lastMouseY_;
+        
+        //ofCamera worldCam;
+        ofEasyCam worldCam;
 };
 
 
