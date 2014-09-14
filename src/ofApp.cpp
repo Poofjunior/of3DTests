@@ -7,10 +7,36 @@ void ofApp::setup(){
 
     ofNoFill();
     
+    q1.encodeRotation(M_PI/120, 1, 0, 1); 
+    q2.encodeRotation(M_PI/120, -1, 0, 1);
+    q3.encodeRotation(M_PI/60, 1, 0, 0);
+
+    myVec.x = 0;
+    myVec.y = 0;
+    myVec.z = 300;
+
+    myVecs = std::vector<vec3>(3);
+
+    myVecs[0].x_ = 0;
+    myVecs[0].y_ = 0;
+    myVecs[0].z_ = 100;
+
+    myVecs[1].x_ = 0;
+    myVecs[1].y_ = 0;
+    myVecs[1].z_ = 100;
+
+    myVecs[2].x_ = 0;
+    myVecs[2].y_ = 0;
+    myVecs[2].z_ = 100;
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    //q1.rotate(myVec.x, myVec.y, myVec.z);
+    q1.rotate(myVecs[0].x_, myVecs[0].y_, myVecs[0].z_);
+    q2.rotate(myVecs[1].x_, myVecs[1].y_, myVecs[1].z_);
+    q3.rotate(myVecs[2].x_, myVecs[2].y_, myVecs[2].z_);
 }
 
 
@@ -21,18 +47,13 @@ void ofApp::draw(){
 
    
 // Draw grid in the center of the screen
-    //ofPushMatrix();
     ofTranslate(ofGetHeight()/2, ofGetWidth()/2);   // move to center.
     ofRotateX(-90);                                  // Zplane is at eye level.
     ofDrawGrid(300, 5);
     ofDrawAxis(100);
-    //ofPopMatrix();
 
-/*
-    drawArrow(0, 0, 0, 90, 0, 0);
-    drawArrow(0, 0, 0, 0, 90, 0);
-    drawArrow(0, 0, 0, 0, 0, 90);
-*/
+    float theta, x, y, z;
+
     drawArrow(0, 0, 0, 0, 0, 0);
 
     for (float theta = -M_PI; theta < M_PI; theta += ((2* M_PI)/20) )
@@ -40,6 +61,15 @@ void ofApp::draw(){
         drawArrow(300*cos(theta), 300*sin(theta), -200, 
                   0, 0, 90 + (theta * (180./M_PI)));
     }
+
+    
+    ofGLRenderer ofGL;
+    ofGL.setLineWidth(5);
+    ofGL.drawLine(0,0,0,myVec.x, myVec.y, myVec.z);
+    ofDrawSphere(myVec.x, myVec.y, myVec.z, 10);
+    
+    for (int i = 0; i < 3; ++i)
+        ofDrawSphere(myVecs[i].x_, myVecs[i].y_, myVecs[i].z_, 10);
 
 }
 

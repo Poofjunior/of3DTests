@@ -8,6 +8,8 @@
 #include "ofMain.h"
 #include <iostream> // TODO: remove after debugging
 #include <cstdlib>
+#include "quaternion.hpp"
+#include <vector>
 
 class ofApp : public ofBaseApp{
 
@@ -27,7 +29,21 @@ class ofApp : public ofBaseApp{
 
         void drawArrow(float x, float y, float z, float roll, float pitch,
                        float yaw, float scale = 1);
+    
+        Quaternion<float> q1;
+        Quaternion<float> q2;
+        Quaternion<float> q3;
+        ofVec3f myVec;
 
+        struct vec3
+        {
+            float x_;
+            float y_;
+            float z_;
+        };
+
+        std::vector<vec3> myVecs;
+        
 
     private:
         static constexpr float pixelsPerMeter_ = 100.;
