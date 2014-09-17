@@ -9,6 +9,7 @@
 #include <iostream> // TODO: remove after debugging
 #include <cstdlib>
 #include "quaternion.hpp"
+#include "qpose.hpp"
 #include <vector>
 
 class ofApp : public ofBaseApp{
@@ -49,13 +50,16 @@ class ofApp : public ofBaseApp{
         static constexpr float pixelsPerMeter_ = 100.;
         
         Quaternion<float> currView;
-        ofQuaternion curRot;
 
         float lastMouseX_;
         float lastMouseY_;
         
-        //ofCamera worldCam;
-        ofEasyCam worldCam;
+        ofCamera worldCam;
+
+        QPose<float> myPose;
+        QPose<float> myOtherPose;
+        
+        
 };
 
 
