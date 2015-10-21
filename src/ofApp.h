@@ -8,8 +8,8 @@
 #include "ofMain.h"
 #include <iostream> // TODO: remove after debugging
 #include <cstdlib>
-#include "quaternion.hpp"
-#include "qpose.hpp"
+#include "../../QPose/src/quaternion.hpp"
+#include "../../QPose/src/qpose.hpp"
 #include <vector>
 
 class ofApp : public ofBaseApp{
@@ -44,22 +44,22 @@ class ofApp : public ofBaseApp{
         };
 
         std::vector<vec3> myVecs;
-        
 
     private:
         static constexpr float pixelsPerMeter_ = 100.;
-        
-        Quaternion<float> currView;
+
+        Quaternion<float> currView_;
+        ofQuaternion curRot;
 
         float lastMouseX_;
         float lastMouseY_;
-        
-        ofCamera worldCam;
 
-        QPose<float> myPose;
-        QPose<float> myOtherPose;
-        
-        
+        ofCamera worldCam_;
+        ofVec3f cameraPosition_;
+        Quaternion<float> cameraPositionRotation_;
+
+        Quaternion<float> cameraOrientation_;
+
 };
 
 
