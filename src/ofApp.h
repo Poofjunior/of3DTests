@@ -17,12 +17,12 @@ class ofApp : public ofBaseApp{
     public:
         static const int windowX_ = 1000;
         static const int windowY_ = 1000;
-                      
+
         void setup();
         void update();
         void draw();
-    
-        
+
+
         void mouseDragged(int x, int y, int button);
         void mousePressed(int x, int y, int button);
         void mouseReleased(int x, int y, int button);
@@ -30,7 +30,7 @@ class ofApp : public ofBaseApp{
 
         void drawArrow(float x, float y, float z, float roll, float pitch,
                        float yaw, float scale = 1);
-    
+
         Quaternion<float> q1;
         Quaternion<float> q2;
         Quaternion<float> q3;
