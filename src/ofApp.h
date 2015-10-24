@@ -56,8 +56,6 @@ class ofApp : public ofBaseApp{
 
         ofCamera worldCam_;
         ofVec3f cameraPosition_;
-        Quaternion<float> cameraPositionRotation_;
-
         Quaternion<float> cameraOrientation_;
 
 };
