@@ -98,6 +98,7 @@ void ofApp::mouseDragged(int x, int y, int button)
     float dampen = 0.4;
     yView.encodeRotation(-1*(y - lastMouseY_)*dampen * (M_PI/180.), 1, 0, 0);
     xView.encodeRotation(-1*(x - lastMouseX_)*dampen * (M_PI/180.), 0, 1, 0);
+    //currView_ = xView * currView_ * yView;
     currView_ = currView_ * yView * xView;
     currView_.normalize();
 
