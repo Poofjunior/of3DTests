@@ -41,11 +41,13 @@ class ofApp : public ofBaseApp{
     private:
         static constexpr float pixelsPerMeter_ = 100.;
 
-        Quaternion<float> currView_;
-        ofQuaternion curRot;
-
+        QPose<float> scrollTransform_;
         float lastMouseX_;
         float lastMouseY_;
+
+
+        QPose<float> startingCameraPose_;
+        QPose<float> cameraPose_;
 
         ofCamera worldCam_;
         ofVec3f cameraPosition_;

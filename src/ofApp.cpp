@@ -8,11 +8,16 @@ void ofApp::setup(){
 
     ofNoFill();
 
-    currView_.encodeRotation(0, 1, 0, 0);
     lastMouseX_ = 0;
     lastMouseY_ = 0;
 
+    startingCameraPose_.encodeRotation(0, 1, 0, 0);
+    startingCameraPose_.encodeTranslation(0, 0, 600);
+
+    cameraPose_ = startingCameraPose_;
+
     qposes_.resize(3);
+/// Lay down some starting poses.
     qposes_[0].encodeRotation(M_PI/120, 1, 0, 1);
     qposes_[0].encodeTranslation(0, 0, 100);
 
@@ -31,10 +36,8 @@ void ofApp::update(){
     rotations.resize(3);
     rotations[0].encodeRotation(M_PI/120, 1, 0, 1);
     rotations[0].encodeTranslation(0, 0, 0);
-
     rotations[1].encodeRotation(M_PI/120, -1, 0, 1);
     rotations[1].encodeTranslation(0, 0, 0);
-
     rotations[2].encodeRotation(M_PI/60, 0, 0, 1);
     rotations[2].encodeTranslation(0, 0, 0);
 
@@ -43,32 +46,31 @@ void ofApp::update(){
     qposes_[2] = rotations[2] * qposes_[2];
 
 
-
-    cameraOrientation_ = currView_;
-/// set initial camera position vector
-    cameraPosition_.set(0, 0, 600);
-/// rotate initial camera position vector
-    cameraOrientation_.rotate(cameraPosition_[0],
-                                   cameraPosition_[1],
-                                   cameraPosition_[2]);
-    worldCam_.setPosition(cameraPosition_);
-
-    float angle, x, y, z;
-    cameraOrientation_.getRotation(angle, x, y, z);
+    float x, y, z, roll, pitch, yaw;
+    float angle, axis_x, axis_y, axis_z;
+    cameraPose_.getTranslation(x, y, z);
+    worldCam_.setPosition(ofVec3f(x, y, z));
 
     ofQuaternion tempQuat;
-    tempQuat.makeRotate(angle*(180/M_PI), x, y, z);
-
+    Quaternion<float>camRotationTemp = cameraPose_.getRotation();
+    camRotationTemp.getRotation(angle, axis_x, axis_y, axis_z);
+    tempQuat.makeRotate(angle*(180/M_PI), axis_x, axis_y, axis_z);
     worldCam_.setOrientation(tempQuat);
+/*
+/// doesn't work.. yet.
+    worldCam_.setOrientation(ofVec3f((180./M_PI)*roll,
+                                     (180./M_PI)*pitch,
+                                     (180./M_PI)*yaw));
+*/
 }
 
 
 void ofApp::draw(){
+    ofRotateX(-90);   // point z axis up.
     worldCam_.begin();
 
-    ofRotateX(-90);   // point z axis up.
 // Draw grid in the center of the screen
-    ofDrawGrid(300, 6);
+    ofDrawGrid(10, 6);
 
     ofDrawAxis(150);
     ofDrawSphere(0, 0, 0, 200);
@@ -93,16 +95,19 @@ void ofApp::keyPressed(int key)
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button)
 {
-
-    Quaternion<float>xView;
-    Quaternion<float>yView;
-
     float dampen = 0.4;
-    yView.encodeRotation(-1*(y - lastMouseY_)*dampen * (M_PI/180.), 1, 0, 0);
-    xView.encodeRotation(-1*(x - lastMouseX_)*dampen * (M_PI/180.), 0, 1, 0);
-    //currView_ = xView * currView_ * yView;
-    currView_ = currView_ * yView * xView;
-    currView_.normalize();
+
+    QPose<float>xTransform, yTransform;
+    xTransform.encodeRotation(-1*(x - lastMouseX_)*dampen * (M_PI/180.), 0, 1, 0);
+    xTransform.encodeTranslation(0, 0, 0);
+    yTransform.encodeRotation(-1*(y - lastMouseY_)*dampen * (M_PI/180.), 1, 0, 0);
+    yTransform.encodeTranslation(0, 0, 0);
+
+    scrollTransform_ = scrollTransform_ * xTransform * yTransform;
+    scrollTransform_.normalizeRotation();
+
+    cameraPose_ = scrollTransform_ * startingCameraPose_;
+    cameraPose_.normalizeRotation();
 
     lastMouseX_ = x;
     lastMouseY_ = y;
