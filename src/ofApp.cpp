@@ -3,7 +3,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetFrameRate(60);
-    ofBackground(ofColor::dimGray);
+    ofBackground(10, 10, 20);
+    ofSetColor(ofColor::powderBlue);
 
     ofNoFill();
 
@@ -65,13 +66,12 @@ void ofApp::update(){
 void ofApp::draw(){
     worldCam_.begin();
 
+    ofRotateX(-90);   // point z axis up.
 // Draw grid in the center of the screen
-    ofDrawGrid(300, 5);
+    ofDrawGrid(300, 6);
 
-    ofDrawAxis(250);
+    ofDrawAxis(150);
     ofDrawSphere(0, 0, 0, 200);
-
-
 
     float x, y, z, roll, pitch, yaw;
     for (int i = 0; i < 3; ++i)
