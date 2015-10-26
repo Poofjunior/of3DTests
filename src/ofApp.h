@@ -28,22 +28,15 @@ class ofApp : public ofBaseApp{
         void mouseReleased(int x, int y, int button);
         void keyPressed(int key);
 
-        void drawArrow(float x, float y, float z, float roll, float pitch,
-                       float yaw, float scale = 1);
+        void drawArrow(float x, float y, float z,
+                       float rot_angle, float rot_x, float rot_y, float rot_z,
+                       float scale);
+        void drawArrow(float x, float y, float z,
+                       float roll, float pitch, float yaw,
+                       float scale);
 
-        Quaternion<float> q1;
-        Quaternion<float> q2;
-        Quaternion<float> q3;
-        ofVec3f myVec;
+        std::vector<QPose<float>> qposes_;
 
-        struct vec3
-        {
-            float x_;
-            float y_;
-            float z_;
-        };
-
-        std::vector<vec3> myVecs;
 
     private:
         static constexpr float pixelsPerMeter_ = 100.;

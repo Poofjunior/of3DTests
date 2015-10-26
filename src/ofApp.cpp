@@ -11,40 +11,42 @@ void ofApp::setup(){
     lastMouseX_ = 0;
     lastMouseY_ = 0;
 
-    q1.encodeRotation(M_PI/120, 1, 0, 1);
-    q2.encodeRotation(M_PI/120, -1, 0, 1);
-    q3.encodeRotation(M_PI/60, 1, 0, 0);
+    qposes_.resize(3);
+    qposes_[0].encodeRotation(M_PI/120, 1, 0, 1);
+    qposes_[0].encodeTranslation(0, 0, 100);
 
-    myVec.x = 0;
-    myVec.y = 0;
-    myVec.z = 300;
+    qposes_[1].encodeRotation(M_PI/120, -1, 0, 1);
+    qposes_[1].encodeTranslation(0, 100, 0);
 
-    myVecs = std::vector<vec3>(3);
+    qposes_[2].encodeRotation(M_PI/60, 1, 0, 0);
+    qposes_[2].encodeTranslation(100, 0, 0);
 
-    myVecs[0].x_ = 0;
-    myVecs[0].y_ = 0;
-    myVecs[0].z_ = 100;
-
-    myVecs[1].x_ = 0;
-    myVecs[1].y_ = 0;
-    myVecs[1].z_ = 100;
-
-    myVecs[2].x_ = 0;
-    myVecs[2].y_ = 0;
-    myVecs[2].z_ = 100;
 
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    q1.rotate(myVecs[0].x_, myVecs[0].y_, myVecs[0].z_);
-    q2.rotate(myVecs[1].x_, myVecs[1].y_, myVecs[1].z_);
-    q3.rotate(myVecs[2].x_, myVecs[2].y_, myVecs[2].z_);
+    std::vector<QPose<float>> rotations;
+    rotations.resize(3);
+    rotations[0].encodeRotation(M_PI/120, 1, 0, 1);
+    rotations[0].encodeTranslation(0, 0, 0);
 
-    std::cout << currView_ << std::endl;
+    rotations[1].encodeRotation(M_PI/120, -1, 0, 1);
+    rotations[1].encodeTranslation(0, 0, 0);
+
+    rotations[2].encodeRotation(M_PI/60, 0, 0, 1);
+    rotations[2].encodeTranslation(0, 0, 0);
+
+    qposes_[0] = rotations[0] * qposes_[0];
+    qposes_[1] = rotations[1] * qposes_[1];
+    qposes_[2] = rotations[2] * qposes_[2];
+
+
 
     cameraOrientation_ = currView_;
+/// set initial camera position vector
     cameraPosition_.set(0, 0, 600);
+/// rotate initial camera position vector
     cameraOrientation_.rotate(cameraPosition_[0],
                                    cameraPosition_[1],
                                    cameraPosition_[2]);
@@ -52,9 +54,6 @@ void ofApp::update(){
 
     float angle, x, y, z;
     cameraOrientation_.getRotation(angle, x, y, z);
-
-    std::cout << "angle: " << angle << std::endl;
-    std::cout << "axis: " << x << ", " << y << ", " << z << std::endl;
 
     ofQuaternion tempQuat;
     tempQuat.makeRotate(angle*(180/M_PI), x, y, z);
@@ -73,10 +72,13 @@ void ofApp::draw(){
     ofDrawSphere(0, 0, 0, 200);
 
 
-    float theta, x, y, z;
 
+    float x, y, z, roll, pitch, yaw;
     for (int i = 0; i < 3; ++i)
-        ofDrawSphere(myVecs[i].x_, myVecs[i].y_, myVecs[i].z_, 10);
+    {
+        qposes_[i].get6DOF(x, y, z, roll, pitch, yaw);
+        ofDrawSphere(x, y, z, 10);
+    }
 
     worldCam_.end();
 }
@@ -118,11 +120,28 @@ void ofApp::mousePressed(int x, int y, int button)
 void ofApp::mouseReleased(int x, int y, int button)
 {}
 
-void ofApp::drawArrow(float x, float y, float z, float roll, float pitch,
-                      float yaw, float scale)
+void ofApp::drawArrow(float x, float y, float z,
+                      float rot_angle,
+                      float rot_x, float rot_y, float rot_z,
+                      float scale)
 {
     ofPushMatrix(); // Save current pose
     ofTranslate(x, y, z);
+
+    ofRotate(rot_angle, rot_x, rot_y, rot_z);
+    ofDrawCylinder(0, scale * 20, 0, scale * 1, scale * 40);
+    ofDrawCone(0, scale * 50, 0, scale * 5, scale * -20);
+    ofPopMatrix();
+}
+
+
+void ofApp::drawArrow(float x, float y, float z,
+                      float roll, float pitch, float yaw,
+                      float scale)
+{
+    ofPushMatrix(); // Save current pose
+    ofTranslate(x, y, z);
+
     ofRotateX(roll);
     ofRotateY(pitch);
     ofRotateZ(yaw - 90 );   // default arrow is collinear with the +x axis.
