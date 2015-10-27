@@ -31,9 +31,6 @@ class ofApp : public ofBaseApp{
         void drawArrow(float x, float y, float z,
                        float rot_angle, float rot_x, float rot_y, float rot_z,
                        float scale);
-        void drawArrow(float x, float y, float z,
-                       float roll, float pitch, float yaw,
-                       float scale);
 
         std::vector<QPose<float>> qposes_;
 

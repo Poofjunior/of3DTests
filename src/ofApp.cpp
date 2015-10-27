@@ -18,14 +18,16 @@ void ofApp::setup(){
 
     qposes_.resize(3);
 /// Lay down some starting poses.
-    qposes_[0].encodeRotation(M_PI/120, 1, 0, 1);
+    //qposes_[0].encodeRotation(M_PI/120, 1, 0, 0);
+    qposes_[0].encodeRotation(0, 0, 0, 0);
     qposes_[0].encodeTranslation(0, 0, 100);
 
-    qposes_[1].encodeRotation(M_PI/120, -1, 0, 1);
+    //qposes_[1].encodeRotation(M_PI/120, -1, 0, 0);
+    qposes_[1].encodeRotation(0, 0, 0, 0);
     qposes_[1].encodeTranslation(0, 100, 0);
 
-    qposes_[2].encodeRotation(M_PI/60, 1, 0, 0);
-    qposes_[2].encodeTranslation(100, 0, 0);
+    qposes_[2].encodeRotation(0,0, 0, 0);
+    qposes_[2].encodeTranslation(20, 0, 0);
 
 
 }
@@ -34,9 +36,9 @@ void ofApp::setup(){
 void ofApp::update(){
     std::vector<QPose<float>> rotations;
     rotations.resize(3);
-    rotations[0].encodeRotation(M_PI/120, 1, 0, 1);
+    rotations[0].encodeRotation(M_PI/120, 1, 0, 0);
     rotations[0].encodeTranslation(0, 0, 0);
-    rotations[1].encodeRotation(M_PI/120, -1, 0, 1);
+    rotations[1].encodeRotation(M_PI/120, -1, 0, 0);
     rotations[1].encodeTranslation(0, 0, 0);
     rotations[2].encodeRotation(M_PI/60, 0, 0, 1);
     rotations[2].encodeTranslation(0, 0, 0);
@@ -67,14 +69,20 @@ void ofApp::draw(){
     ofDrawGrid(10, 6);
 
     ofDrawAxis(150);
-    ofDrawSphere(0, 0, 0, 200);
+    //ofDrawSphere(0, 0, 0, 200);
 
-    float x, y, z, roll, pitch, yaw;
+    float x, y, z, r_axis, r_x, r_y, r_z;
+    Quaternion<float> rotation;
     for (int i = 0; i < 3; ++i)
     {
-        qposes_[i].get6DOF(x, y, z, roll, pitch, yaw);
-        ofDrawSphere(x, y, z, 10);
+        rotation = qposes_[i].getRotation();
+        rotation.getRotation(r_axis, r_x, r_y, r_z);
+        qposes_[i].getTranslation(x, y, z);
+        drawArrow(x, y, z, (180./M_PI)*r_axis, r_x, r_y, r_z, 1);
+        //ofDrawSphere(x, y, z, 10);
     }
+/// default arrow is in the plus-y direction.
+    drawArrow(200, 0, 0, 0, 0, 0, 0, 1);
 
     worldCam_.end();
 }
@@ -126,25 +134,9 @@ void ofApp::drawArrow(float x, float y, float z,
 {
     ofPushMatrix(); // Save current pose
     ofTranslate(x, y, z);
-
     ofRotate(rot_angle, rot_x, rot_y, rot_z);
-    ofDrawCylinder(0, scale * 20, 0, scale * 1, scale * 40);
-    ofDrawCone(0, scale * 50, 0, scale * 5, scale * -20);
-    ofPopMatrix();
-}
-
-
-void ofApp::drawArrow(float x, float y, float z,
-                      float roll, float pitch, float yaw,
-                      float scale)
-{
-    ofPushMatrix(); // Save current pose
-    ofTranslate(x, y, z);
-
-    ofRotateX(roll);
-    ofRotateY(pitch);
-    ofRotateZ(yaw - 90 );   // default arrow is collinear with the +x axis.
-    ofDrawCylinder(0, scale * 20, 0, scale * 1, scale * 40);
+    ofRotateZ(-90); // default arrow should align with the +x axis.
+    ofDrawCylinder(0, scale * 30, 0, scale * 1, scale * 40);
     ofDrawCone(0, scale * 50, 0, scale * 5, scale * -20);
     ofPopMatrix();
 }
