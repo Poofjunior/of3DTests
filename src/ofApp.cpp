@@ -56,18 +56,12 @@ void ofApp::update(){
     camRotationTemp.getRotation(angle, axis_x, axis_y, axis_z);
     tempQuat.makeRotate(angle*(180/M_PI), axis_x, axis_y, axis_z);
     worldCam_.setOrientation(tempQuat);
-/*
-/// doesn't work.. yet.
-    worldCam_.setOrientation(ofVec3f((180./M_PI)*roll,
-                                     (180./M_PI)*pitch,
-                                     (180./M_PI)*yaw));
-*/
 }
 
 
 void ofApp::draw(){
-    ofRotateX(-90);   // point z axis up.
     worldCam_.begin();
+    ofRotateX(-90);   // point z axis up.
 
 // Draw grid in the center of the screen
     ofDrawGrid(10, 6);
@@ -103,7 +97,7 @@ void ofApp::mouseDragged(int x, int y, int button)
     yTransform.encodeRotation(-1*(y - lastMouseY_)*dampen * (M_PI/180.), 1, 0, 0);
     yTransform.encodeTranslation(0, 0, 0);
 
-    scrollTransform_ = scrollTransform_ * xTransform * yTransform;
+    scrollTransform_ = scrollTransform_ * yTransform * xTransform;
     scrollTransform_.normalizeRotation();
 
     cameraPose_ = scrollTransform_ * startingCameraPose_;
